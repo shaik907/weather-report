@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+        input {
+            padding: 10px;
+            width: 80%;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            background: #007BFF;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #weather {
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        const apiKey = "ed0d7bf2bc79c18a2164593af09f025e";
+
+        async function getWeather() {
+            const city = document.getElementById('city').value.trim();
+            if (!city) {
+                alert('Please enter a city name');
+                return;
+            }
+
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.cod !== 200) {
+                    document.getElementById('weather').innerHTML = `<p>${data.message}</p>`;
+                    return;
+                }
+
+                document.getElementById('weather').innerHTML = `
+                    <h2>${data.name}, ${data.sys.country}</h2>
+                    <p>Temperature: ${data.main.temp}°C</p>
+                    <p>Humidity: ${data.main.humidity}%</p>
+                    <p>Wind Speed: ${data.wind.speed} m/s</p>
+                    <p>Condition: ${data.weather[0].description}</p>
+                `;
+            } catch (error) {
+                document.getElementById('weather').innerHTML = `<p>Error fetching data</p>`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Report</h1>
+        <input type="text" id="city" placeholder="Enter city name">
+        <button onclick="getWeather()">Get Weather</button>
+        <div id="weather"></div>
+    </div>
+</body>
+</html>
